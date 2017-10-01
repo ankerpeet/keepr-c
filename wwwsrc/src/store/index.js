@@ -1,4 +1,6 @@
 import axios from 'axios'
+import vue from 'vue'
+import vuex from 'vuex'
 
 let api = axios.create({
   baseURL: 'http://localhost:5000/api/',
@@ -6,32 +8,65 @@ let api = axios.create({
   withCredentials: true
 })
 
-function CreateAccountExample() {
-  api.post('account', { email: "j@j.com", password: 'Testing123!' }).then(GetDataExample)
-}
+vue.use(vuex)
 
-function loginAndGetDataExample() {
-  api.post('account/login', { email: "j@j.com", password: 'Testing123!' }).then(GetDataExample)
-}
+var store = new vuex.Store({
+  state: {
+    user: {},
+    keeps: []
+  },
+  mutations: {
+    setKeeps(state, data) {
+      state.keeps = data
+    },
+    createUser(state, user) {
+      state.user = user
+    },
+    login(state, user) {
+      state.user = user
+      console.log(user);
+    },
+    logout(state, user) {
+      state.user = {}
+    }
+  },
+  actions: {
+    getKeeps({ commit, dispatch }) {
+      api('keeps').then(res => {
+        console.log("Keeps:", res.data)
+        commit('setKeeps', res.data)
+      }).catch(err => {
+        console.error(err)
+      })
+    },
 
-function logout() {
-  api.delete('account/logout')
-}
+    //User sign up, logout, and login functions
+    createUser({ commit, dispatch }, user) {
+      api.post('account', user)
+        .then(res => {
+          commit('createUser', res.data)
+        })
+    },
+    login({ commit, dispatch }, user) {
+      api.post('account/login', user)
+        .then(res => {
+          commit('login', res.data)
+        })
+    },
+    logout({ commit, dispatch }) {
+      api.delete('account/logout')
+        .then(commit('logout'))
+    },
 
-function GetDataExample() {
-  api('values').then(d => {
-    console.log("Values Controller Data:", d)
-  }).catch(err => {
-    console.error(err)
-  })
-}
+    auth({ commit, dispatch }) {
+      api('account').then(res => {
+        console.log("Auth Response", res.data)
+        commit('login', res.data)
+      })
+    }
+  }
+})
 
-function getAuth(){
-  api('account').then(res => {
-    console.log("Auth Response", res)
-  })
-}
 
-// loginAndGetDataExample()
-getAuth()
+export default store
 

@@ -1,23 +1,28 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.jpg">
-    <router-view></router-view>
+    <mynav></mynav>
+    <router-view class="container"></router-view>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'app',
-}
+  import mynav from './components/MyNav'
+  export default {
+    name: 'app',
+    components: {
+      mynav
+    },
+    mounted() {
+      this.$store.dispatch('auth');
+    }
+  }
+
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  @import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  }
 </style>
