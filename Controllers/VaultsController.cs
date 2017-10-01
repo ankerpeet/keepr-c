@@ -44,9 +44,12 @@ namespace keepr.Controllers
 
         [Authorize]
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]Keep keep)
+        public string Put(int id, [FromBody]Vault vault)
         {
-            // _db.Update(_db.Vaults.Find(id));
+            var oldVault = _db.Vaults.Find(id);
+            oldVault = vault;
+            _db.SaveChanges();
+            return "Successfully updated";
 
         }
 

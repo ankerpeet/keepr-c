@@ -44,9 +44,12 @@ namespace keepr.Controllers
 
         [Authorize]
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]Keep keep)
+        public string Put(int id, [FromBody]Keep keep)
         {
-            // _db.Update(_db.Keeps.Find(id));
+            var oldKeep = _db.Keeps.Find(id);
+            oldKeep = keep;
+            _db.SaveChanges();
+            return "Successfully updated";
 
         }
 
