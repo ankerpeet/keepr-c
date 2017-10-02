@@ -1,6 +1,7 @@
 import axios from 'axios'
 import vue from 'vue'
 import vuex from 'vuex'
+import router from '../router'
 
 let api = axios.create({
   baseURL: 'http://localhost:5000/api/',
@@ -19,21 +20,30 @@ var store = new vuex.Store({
     setKeeps(state, data) {
       state.keeps = data
     },
-    createUser(state, user) {
+    setUser(state, user) {
       state.user = user
-    },
-    login(state, user) {
-      state.user = user
-      console.log(user);
-    },
-    logout(state, user) {
-      state.user = {}
     }
   },
   actions: {
+    //Get all keeps
     getKeeps({ commit, dispatch }) {
       api('keeps').then(res => {
-        console.log("Keeps:", res.data)
+        commit('setKeeps', res.data)
+      }).catch(err => {
+        console.error(err)
+      })
+    },
+    //Get User's Keeps
+    getUserKeeps({ commit, dispatch }, userId) {
+      api(`account/${userId}/keeps`).then(res => {
+        commit('setKeeps', res.data)
+      }).catch(err => {
+        console.error(err)
+      })
+    },
+    //Get a single keep by its Id
+    getKeep({ commit, dispatch }, id) {
+      api('keeps/' + id).then(res => {
         commit('setKeeps', res.data)
       }).catch(err => {
         console.error(err)
@@ -44,24 +54,27 @@ var store = new vuex.Store({
     createUser({ commit, dispatch }, user) {
       api.post('account', user)
         .then(res => {
-          commit('createUser', res.data)
+          commit('setUser', res.data);
+          return router.push('/dashboard/' + res.data.id);
         })
     },
     login({ commit, dispatch }, user) {
       api.post('account/login', user)
         .then(res => {
-          commit('login', res.data)
+          commit('setUser', res.data)
+          return router.push('/dashboard/' + res.data.id);
         })
     },
     logout({ commit, dispatch }) {
       api.delete('account/logout')
-        .then(commit('logout'))
+        .then(commit('setUser', {}))
+        return router.push('/');
     },
 
     auth({ commit, dispatch }) {
       api('account').then(res => {
         console.log("Auth Response", res.data)
-        commit('login', res.data)
+        commit('setUser', res.data)
       })
     }
   }

@@ -22,6 +22,7 @@
         },
         computed: {
             keeps() {
+                console.log(this.$store.state.keeps)
                 return this.$store.state.keeps
             }
         }

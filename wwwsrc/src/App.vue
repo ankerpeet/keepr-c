@@ -25,4 +25,11 @@
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
   }
+
+  .align-everything {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 </style>
